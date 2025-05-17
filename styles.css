@@ -327,7 +327,69 @@ header h1 {
     padding: 60px 0;
 }
 
-/* Team Selection Image Styles */
+.team-selection h2 {
+    margin-bottom: 1.5rem;
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.requirements {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #333;
+    text-align: center;
+}
+
+.qualification-list {
+    list-style-type: none;
+    padding: 0;
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin: 0 auto 3rem;
+}
+
+.qualification-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+.qualification-list li:last-child {
+    border-bottom: none;
+}
+
+.link-highlight {
+    color: var(--blue-team);
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.3s;
+    border-bottom: 1px dotted var(--blue-team);
+}
+
+.link-highlight:hover {
+    color: var(--red-team);
+    border-bottom-color: var(--red-team);
+}
+
+.versus {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--yellow-accent);
+    margin: 0 1.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.team-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin: 0 auto;
+}
+
 .team-option {
     display: flex;
     flex-direction: column;
@@ -348,54 +410,6 @@ header h1 {
     transform: scale(1.05);
 }
 
-.team-selection h2 {
-    margin-bottom: 1.5rem;
-    font-size: 2.5rem;
-    font-weight: 700;
-}
-
-.requirements {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-    font-weight: 700;
-}
-
-.qualification-list {
-    list-style-type: none;
-    max-width: 500px;
-    margin: 0 auto 3rem;
-}
-
-.qualification-list li {
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #ddd;
-}
-
-.qualification-list li:last-child {
-    border-bottom: none;
-}
-
-.link-highlight {
-    color: var(--blue-team);
-    font-weight: 700;
-    text-decoration: none;
-    transition: color 0.3s;
-    border-bottom: 1px dotted var(--blue-team);
-}
-
-.link-highlight:hover {
-    color: var(--red-team);
-    border-bottom-color: var(--red-team);
-}
-
-.team-buttons {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 2rem;
-}
-
 .red-button, .blue-button {
     padding: 1.2rem 2.5rem;
     font-size: 1.5rem;
@@ -406,6 +420,7 @@ header h1 {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     min-width: 200px;
+    text-align: center;
 }
 
 .red-button {
@@ -646,6 +661,63 @@ footer a:hover {
     .logo {
         margin-right: 0;
         margin-bottom: 1rem;
+    }
+    
+    /* Team Selection Mobile Styles */
+    .team-selection {
+        padding: 40px 0;
+    }
+    
+    .team-selection h2 {
+        font-size: 2rem;
+    }
+    
+    .qualification-box {
+        padding: 1.5rem;
+        margin: 0 1rem;
+    }
+    
+    .requirements {
+        font-size: 1.2rem;
+    }
+    
+    .qualification-list li {
+        font-size: 1rem;
+    }
+    
+    .team-buttons {
+        flex-direction: column;
+        gap: 30px;
+        padding: 0 1rem;
+    }
+    
+    .team-option {
+        max-width: 100%;
+    }
+    
+    .versus-container {
+        margin-bottom: 1.5rem;
+    }
+    
+    .versus-line {
+        max-width: 100px;
+    }
+    
+    .team-image-container {
+        height: 180px;
+    }
+    
+    .stat-value {
+        font-size: 1.8rem;
+    }
+    
+    .stat-label {
+        font-size: 0.8rem;
+    }
+    
+    .red-button, .blue-button {
+        padding: 0.8rem 1.5rem;
+        font-size: 1.1rem;
     }
 }
 
