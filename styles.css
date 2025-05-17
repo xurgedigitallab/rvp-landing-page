@@ -39,7 +39,8 @@ header {
     position: sticky;
     top: 0;
     z-index: 1000;
-    transition: all 0.3s ease;
+    transition: all 0.3s ease-in-out;
+    will-change: padding;
 }
 
 /* Scrolled header state */
@@ -113,7 +114,8 @@ header.scrolled {
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
-    transition: all 0.3s ease;
+    transition: all 0.3s ease-in-out;
+    will-change: transform, flex-wrap, justify-content;
 }
 
 /* Scrolled state for logo container */
@@ -126,7 +128,10 @@ header.scrolled .logo-container {
 .logo {
     height: 70px;
     margin-right: 20px;
-    transition: all 0.3s ease;
+    transition: all 0.3s ease-in-out;
+    will-change: transform, height;
+    backface-visibility: hidden;
+    transform: translateZ(0);
 }
 
 /* Scrolled state for logo */
@@ -140,7 +145,10 @@ header h1 {
     font-weight: 700;
     color: #8626c9;
     text-align: center;
-    transition: all 0.3s ease;
+    transition: all 0.3s ease-in-out;
+    will-change: transform, font-size, margin;
+    backface-visibility: hidden;
+    transform: translateZ(0);
 }
 
 /* Scrolled state for header title */

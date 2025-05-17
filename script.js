@@ -124,20 +124,31 @@ document.addEventListener('DOMContentLoaded', function() {
     const header = document.querySelector('header');
     const scrollThreshold = 50; // Pixels to scroll before transforming header
     
-    // Function to check scroll position and update header
+    // Function to check scroll position and update header (with throttling)
+    let isScrolling = false;
     function checkScrollPosition() {
-        if (window.scrollY > scrollThreshold) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
+        if (!isScrolling) {
+            isScrolling = true;
+            window.requestAnimationFrame(() => {
+                if (window.scrollY > scrollThreshold) {
+                    if (!header.classList.contains('scrolled')) {
+                        header.classList.add('scrolled');
+                    }
+                } else {
+                    if (header.classList.contains('scrolled')) {
+                        header.classList.remove('scrolled');
+                    }
+                }
+                isScrolling = false;
+            });
         }
     }
     
     // Initial check on page load
     checkScrollPosition();
     
-    // Check on scroll
-    window.addEventListener('scroll', checkScrollPosition);
+    // Check on scroll with passive event for better performance
+    window.addEventListener('scroll', checkScrollPosition, { passive: true });
     
     // Add animation to team buttons
     const redButton = document.querySelector('.red-button');
