@@ -34,13 +34,15 @@ body {
 /* Header Styles */
 header {
     background-color: #f9f9f9;
-    padding: 0.2rem 0 0;
+    padding: 1rem 0 0;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: -webkit-sticky; /* For iOS Safari */
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 9999; /* Increase z-index to ensure it stays above everything */
     transition: all 0.3s ease-in-out;
     will-change: padding;
+    width: 100%;
 }
 
 /* Scrolled header state */
@@ -52,6 +54,8 @@ header.scrolled {
 .main-nav {
     margin-top: 1.5rem;
     background: linear-gradient(90deg, var(--red-team) 0%, var(--blue-team) 100%);
+    position: relative;
+    z-index: 9999;
 }
 
 .nav-tabs {
@@ -669,6 +673,16 @@ footer a:hover {
     .team-image {
         width: 180px;
         height: 180px;
+    }
+    
+    /* Fix sticky header for mobile */
+    header {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
     }
     
     header h1 {
