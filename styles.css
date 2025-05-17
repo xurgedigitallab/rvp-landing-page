@@ -39,6 +39,12 @@ header {
     position: sticky;
     top: 0;
     z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+/* Scrolled header state */
+header.scrolled {
+    padding: 0.5rem 0 0;
 }
 
 /* Navigation Styles */
@@ -106,28 +112,42 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-wrap: nowrap; /* Prevent wrapping to keep items side by side */
-    max-width: 100%;
-    padding: 0 10px;
+    flex-wrap: wrap;
+    transition: all 0.3s ease;
+}
+
+/* Scrolled state for logo container */
+header.scrolled .logo-container {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    padding-left: 1rem;
 }
 
 .logo {
-    height: 60px;
+    height: 70px;
+    margin-right: 20px;
+    transition: all 0.3s ease;
+}
+
+/* Scrolled state for logo */
+header.scrolled .logo {
+    height: 40px;
     margin-right: 15px;
-    flex-shrink: 1;
-    min-width: 0;
 }
 
 header h1 {
-    font-size: clamp(1.2rem, 4vw, 2rem);
+    font-size: 2rem;
     font-weight: 700;
     color: #8626c9;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+/* Scrolled state for header title */
+header.scrolled h1 {
+    font-size: 1.5rem;
     text-align: left;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    flex-shrink: 1;
-    min-width: 0;
+    margin: 0;
 }
 
 /* Hero Section */
@@ -645,24 +665,32 @@ footer a:hover {
     
     header h1 {
         font-size: 1.5rem;
-        margin-top: 0.5rem;
+        margin-top: 1rem;
     }
     
     .logo-container {
-        /* Keep side-by-side layout but adjust spacing */
-        flex-direction: row;
-        justify-content: flex-start;
-        padding: 0 10px;
+        flex-direction: column;
     }
     
     .logo {
-        height: 50px;
-        margin-right: 10px;
-        margin-bottom: 0;
+        margin-right: 0;
+        margin-bottom: 0.5rem;
     }
     
-    header h1 {
-        font-size: clamp(1rem, 5vw, 1.5rem);
+    /* Mobile scrolled header styles */
+    header.scrolled .logo-container {
+        flex-direction: row;
+        padding-left: 0.5rem;
+    }
+    
+    header.scrolled h1 {
+        font-size: 1.2rem;
+        margin-top: 0;
+    }
+    
+    header.scrolled .logo {
+        height: 35px;
+        margin-bottom: 0;
     }
     
     /* Team Selection Mobile Styles */

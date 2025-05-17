@@ -120,6 +120,25 @@ function handleSwipe() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Header scroll transformation
+    const header = document.querySelector('header');
+    const scrollThreshold = 50; // Pixels to scroll before transforming header
+    
+    // Function to check scroll position and update header
+    function checkScrollPosition() {
+        if (window.scrollY > scrollThreshold) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    }
+    
+    // Initial check on page load
+    checkScrollPosition();
+    
+    // Check on scroll
+    window.addEventListener('scroll', checkScrollPosition);
+    
     // Add animation to team buttons
     const redButton = document.querySelector('.red-button');
     const blueButton = document.querySelector('.blue-button');
