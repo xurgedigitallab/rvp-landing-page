@@ -1,6 +1,75 @@
 // Carousel functionality variables
 let slideIndex = 1;
 
+// Next/previous controls for carousel - defined in global scope
+function plusSlides(n) {
+    showSlides(slideIndex += n);
+}
+
+// Thumbnail image controls for carousel - defined in global scope
+function currentSlide(n) {
+    showSlides(slideIndex = n);
+}
+
+function showSlides(n) {
+    let slides = document.getElementsByClassName("carousel-slide");
+    if (!slides.length) return; // Exit if no slides exist
+    
+    let dots = document.getElementsByClassName("dot");
+    
+    // Loop back to first slide if at the end
+    if (n > slides.length) {slideIndex = 1}
+    
+    // Go to last slide if at the beginning
+    if (n < 1) {slideIndex = slides.length}
+    
+    // Hide all slides
+    for (let i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";
+    }
+    
+    // Remove active class from all dots
+    for (let i = 0; i < dots.length; i++) {
+        dots[i].className = dots[i].className.replace(" active", "");
+    }
+    
+    // Show the current slide and mark its dot as active
+    if (window.innerWidth <= 768) {
+        slides[slideIndex-1].style.display = "block";
+        dots[slideIndex-1].className += " active";
+    } else {
+        // Show all slides on larger screens
+        for (let i = 0; i < slides.length; i++) {
+            slides[i].style.display = "block";
+        }
+    }
+}
+
+// Handle responsive display of carousel
+function handleCarouselDisplay() {
+    let slides = document.getElementsByClassName("carousel-slide");
+    if (!slides.length) return; // Exit if no slides exist
+    
+    let navigation = document.querySelector('.carousel-navigation');
+    if (!navigation) return; // Exit if navigation doesn't exist
+    
+    if (window.innerWidth <= 768) {
+        // On mobile, show only the active slide
+        showSlides(slideIndex);
+        
+        // Show navigation dots
+        navigation.style.display = 'flex';
+    } else {
+        // On desktop, show all slides side by side
+        for (let i = 0; i < slides.length; i++) {
+            slides[i].style.display = "block";
+        }
+        
+        // Hide navigation dots
+        navigation.style.display = 'none';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Add animation to team buttons
     const redButton = document.querySelector('.red-button');
@@ -89,72 +158,3 @@ document.addEventListener('DOMContentLoaded', function() {
     handleCarouselDisplay();
     window.addEventListener('resize', handleCarouselDisplay);
 });
-
-// Next/previous controls for carousel
-function plusSlides(n) {
-    showSlides(slideIndex += n);
-}
-
-// Thumbnail image controls for carousel
-function currentSlide(n) {
-    showSlides(slideIndex = n);
-}
-
-function showSlides(n) {
-    let slides = document.getElementsByClassName("carousel-slide");
-    if (!slides.length) return; // Exit if no slides exist
-    
-    let dots = document.getElementsByClassName("dot");
-    
-    // Loop back to first slide if at the end
-    if (n > slides.length) {slideIndex = 1}
-    
-    // Go to last slide if at the beginning
-    if (n < 1) {slideIndex = slides.length}
-    
-    // Hide all slides
-    for (let i = 0; i < slides.length; i++) {
-        slides[i].style.display = "none";
-    }
-    
-    // Remove active class from all dots
-    for (let i = 0; i < dots.length; i++) {
-        dots[i].className = dots[i].className.replace(" active", "");
-    }
-    
-    // Show the current slide and mark its dot as active
-    if (window.innerWidth <= 768) {
-        slides[slideIndex-1].style.display = "block";
-        dots[slideIndex-1].className += " active";
-    } else {
-        // Show all slides on larger screens
-        for (let i = 0; i < slides.length; i++) {
-            slides[i].style.display = "block";
-        }
-    }
-}
-
-// Handle responsive display of carousel
-function handleCarouselDisplay() {
-    let slides = document.getElementsByClassName("carousel-slide");
-    if (!slides.length) return; // Exit if no slides exist
-    
-    let navigation = document.querySelector('.carousel-navigation');
-    if (!navigation) return; // Exit if navigation doesn't exist
-    
-    if (window.innerWidth <= 768) {
-        // On mobile, show only the active slide
-        showSlides(slideIndex);
-        
-        // Show navigation dots
-        navigation.style.display = 'flex';
-    } else {
-        // On desktop, show all slides side by side
-        for (let i = 0; i < slides.length; i++) {
-            slides[i].style.display = "block";
-        }
-        
-        // Hide navigation dots
-        navigation.style.display = 'none';
-    }
-}
