@@ -123,7 +123,7 @@ header h1 {
 
 /* Hero Section */
 .hero {
-    background-image: url('images/red-vs-blue.jpg');
+    background-image: url('images/lv.png');
     background-size: cover;
     background-position: center;
     color: var(--text-light);
@@ -144,36 +144,21 @@ header h1 {
     z-index: 1;
 }
 
-.team-overlays {
+.hero-background {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     z-index: 0;
-}
-
-.team-overlay {
-    position: absolute;
-    height: 100%;
-    width: 50%;
     overflow: hidden;
-    opacity: 0.15;
+    opacity: 1;
 }
 
-.team-overlay.red {
-    left: 0;
-}
-
-.team-overlay.blue {
-    right: 0;
-}
-
-.team-bg-image {
+.hero-bg-image {
     height: 100%;
     width: 100%;
     object-fit: cover;
-    filter: grayscale(50%);
 }
 
 .hero-content {
@@ -721,17 +706,56 @@ footer a:hover {
     }
 }
 
-/* X Post Example Styles */
-.example-posts-container {
+/* X Post Example Styles - Carousel */
+.carousel-container {
     margin: 20px 0;
     max-width: 100%;
+    position: relative;
+    overflow: hidden;
 }
 
-.example-posts {
+.example-label {
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333;
+    text-align: center;
+}
+
+.carousel-track {
     display: flex;
-    flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
+    flex-wrap: wrap;
+}
+
+.carousel-slide {
+    flex: 1 1 300px;
+    max-width: calc(50% - 10px);
+}
+
+.carousel-navigation {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.carousel-dots {
+    display: flex;
+    gap: 8px;
+}
+
+.dot {
+    height: 10px;
+    width: 10px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.dot.active {
+    background-color: #4285F4;
 }
 
 .x-post {
@@ -899,14 +923,31 @@ footer a:hover {
     color: #00ba7c;
 }
 
+/* Fair Play Section Styles */
+.fair-play-section {
+    background: linear-gradient(135deg, rgba(255,0,0,0.03) 0%, rgba(0,68,204,0.03) 100%);
+    padding: 60px 0;
+    border-top: 1px solid #eaeaea;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.fair-play-section h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
 /* Fair Play Rules Styles */
 .fair-play-rules {
-    background-color: #f8f9fa;
+    background-color: #fff;
     border-radius: 10px;
     border-left: 5px solid #dc3545;
-    padding: 20px;
-    margin: 30px 0;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 25px;
+    margin: 0 auto;
+    max-width: 900px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .fair-play-rules h3 {
@@ -1066,19 +1107,33 @@ footer a:hover {
         font-size: 13px;
     }
     
-    .example-posts-container {
+    .carousel-container {
         margin: 15px auto;
         max-width: 100%;
     }
     
-    .example-posts {
+    .carousel-track {
         flex-direction: column;
         gap: 15px;
+    }
+    
+    .carousel-slide {
+        max-width: 100%;
+        flex: 1 1 auto;
     }
     
     .x-post {
         min-width: 100%;
         margin-bottom: 10px;
+    }
+    
+    .carousel-dots {
+        margin-top: 10px;
+    }
+    
+    .dot {
+        height: 8px;
+        width: 8px;
     }
     
     .action-button {
