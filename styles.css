@@ -722,7 +722,19 @@ footer a:hover {
 }
 
 /* X Post Example Styles */
-.sample-post {
+.example-post-container {
+    margin: 20px 0;
+    max-width: 500px;
+}
+
+.example-label {
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-style: italic;
+    color: #555;
+}
+
+.x-post {
     background-color: #fff;
     border-radius: 12px;
     border: 1px solid #e5e5e5;
@@ -735,6 +747,133 @@ footer a:hover {
 }
 
 .post-header {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.profile-image {
+    width: 48px;
+    height: 48px;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.profile-image img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #e5e5e5;
+}
+
+.user-info {
+    flex-grow: 1;
+}
+
+.name-container {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.display-name {
+    font-weight: 700;
+    font-size: 16px;
+    margin-right: 4px;
+}
+
+.verified-badge {
+    background-color: #1d9bf0;
+    color: white;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    margin-right: 4px;
+}
+
+.username {
+    color: #536471;
+    font-size: 14px;
+}
+
+.menu-icon {
+    margin-left: auto;
+    color: #536471;
+}
+
+.post-content {
+    margin-bottom: 12px;
+}
+
+.post-text {
+    font-size: 16px;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.hashtag {
+    color: #1d9bf0;
+    cursor: pointer;
+}
+
+.mention {
+    color: #1d9bf0;
+    cursor: pointer;
+}
+
+.post-media {
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.post-media img {
+    width: 100%;
+    display: block;
+    border-radius: 16px;
+}
+
+.post-stats {
+    color: #536471;
+    font-size: 14px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.post-actions {
+    display: flex;
+    justify-content: space-between;
+    color: #536471;
+}
+
+.action-button {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+.action-button:hover {
+    color: #1d9bf0;
+}
+
+.action-button.like:hover {
+    color: #f91880;
+}
+
+.action-button.repost:hover {
+    color: #00ba7c;
+}
+
+/* Sample post styles override */
+.sample-post .post-header {
     display: flex;
     align-items: center;
     margin-bottom: 12px;
@@ -814,28 +953,48 @@ footer a:hover {
     }
 }
 
-/* Mobile responsiveness for sample post */
+/* Mobile responsiveness for posts */
 @media (max-width: 768px) {
-    .sample-post {
+    .sample-post, .x-post {
         max-width: 100%;
         padding: 12px;
         margin: 10px 0;
     }
     
-    .post-content {
+    .post-content, .post-text {
         font-size: 14px;
     }
     
-    .post-name {
+    .post-name, .display-name {
         font-size: 15px;
     }
     
-    .post-handle {
+    .post-handle, .username {
         font-size: 13px;
     }
     
-    .post-engagement {
+    .post-engagement, .post-stats, .post-actions {
         font-size: 13px;
+    }
+    
+    .example-post-container {
+        margin: 15px auto;
+        max-width: 100%;
+    }
+    
+    .action-button {
+        font-size: 13px;
+    }
+    
+    .profile-image {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .verified-badge {
+        width: 16px;
+        height: 16px;
+        font-size: 10px;
     }
 }
 
