@@ -726,6 +726,8 @@ footer a:hover {
     gap: 20px;
     justify-content: center;
     flex-wrap: wrap;
+    touch-action: pan-y; /* Allow vertical scrolling but capture horizontal swipes */
+    cursor: grab;
 }
 
 .carousel-slide {

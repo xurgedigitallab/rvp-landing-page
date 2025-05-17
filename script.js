@@ -1,5 +1,7 @@
 // Carousel functionality variables
 let slideIndex = 1;
+let touchStartX = 0;
+let touchEndX = 0;
 
 // Next/previous controls for carousel - defined in global scope
 function plusSlides(n) {
@@ -68,6 +70,53 @@ function handleCarouselDisplay() {
         // Hide navigation dots
         navigation.style.display = 'none';
     }
+}
+
+// Setup touch event listeners for swipe functionality
+function setupSwipeListeners() {
+    const carousel = document.querySelector('.carousel-track');
+    if (!carousel) return; // Exit if carousel doesn't exist
+    
+    // Touch events for mobile
+    carousel.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    
+    carousel.addEventListener('touchend', function(e) {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, { passive: true });
+    
+    // Mouse events for desktop (for testing)
+    carousel.addEventListener('mousedown', function(e) {
+        touchStartX = e.screenX;
+    });
+    
+    carousel.addEventListener('mouseup', function(e) {
+        touchEndX = e.screenX;
+        handleSwipe();
+    });
+}
+
+// Handle the swipe gesture
+function handleSwipe() {
+    const swipeThreshold = 50; // Minimum distance required for a swipe
+    
+    if (touchEndX === 0) return; // Exit if no touch end recorded
+    
+    if (window.innerWidth <= 768) { // Only enable swipe on mobile
+        if (touchEndX < touchStartX - swipeThreshold) {
+            // Swipe left - show next slide
+            plusSlides(1);
+        } else if (touchEndX > touchStartX + swipeThreshold) {
+            // Swipe right - show previous slide
+            plusSlides(-1);
+        }
+    }
+    
+    // Reset values
+    touchStartX = 0;
+    touchEndX = 0;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -157,4 +206,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check screen size on load and resize
     handleCarouselDisplay();
     window.addEventListener('resize', handleCarouselDisplay);
+    
+    // Add touch event listeners for swipe functionality
+    setupSwipeListeners();
 });
