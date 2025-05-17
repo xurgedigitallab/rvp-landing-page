@@ -1,0 +1,33 @@
+<svg width="1920" height="1080" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="redGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ff0000;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#cc0000;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#0044cc;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#002288;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Red section -->
+  <rect x="0" y="0" width="960" height="1080" fill="url(#redGradient)" />
+  
+  <!-- Blue section -->
+  <rect x="960" y="0" width="960" height="1080" fill="url(#blueGradient)" />
+  
+  <!-- Versus graphic in the center -->
+  <g transform="translate(960, 540)">
+    <circle cx="0" cy="0" r="200" fill="#ffcc00" />
+    <path d="M-100,-100 L-50,100 M50,-100 L-100,100" stroke="#000000" stroke-width="30" stroke-linecap="round" />
+    <path d="M100,-100 L50,100 M50,-100 L100,100" stroke="#000000" stroke-width="30" stroke-linecap="round" />
+  </g>
+  
+  <!-- Lightning bolt patterns -->
+  <g transform="translate(0, 0)" opacity="0.4">
+    <path d="M200,100 L300,300 L250,350 L400,600" stroke="#ffcc00" stroke-width="15" stroke-linecap="round" />
+    <path d="M800,200 L700,400 L750,450 L600,700" stroke="#ffcc00" stroke-width="15" stroke-linecap="round" />
+    <path d="M1200,100 L1300,300 L1250,350 L1400,600" stroke="#ffcc00" stroke-width="15" stroke-linecap="round" />
+    <path d="M1800,200 L1700,400 L1750,450 L1600,700" stroke="#ffcc00" stroke-width="15" stroke-linecap="round" />
+  </g>
+</svg>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - TextRP Challenge</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <style>
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 80vh;
+            text-align: center;
+            padding: 0 2rem;
+        }
+        .error-code {
+            font-size: 8rem;
+            font-weight: 900;
+            margin: 0;
+            background: linear-gradient(135deg, #ff0000 0%, #0044cc 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            line-height: 1;
+        }
+        .error-message {
+            font-size: 2rem;
+            margin: 1rem 0 2rem;
+        }
+        .home-button {
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #ff0000 0%, #0044cc 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .home-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="images/textrp-logo.svg" alt="TextRP Logo" class="logo">
+            <h1>XRP Las Vegas Challenge</h1>
+        </div>
+    </header>
+
+    <main>
+        <div class="error-container">
+            <p class="error-code">404</p>
+            <h1 class="error-message">Page Not Found</h1>
+            <p>The page you are looking for doesn't exist or has been moved.</p>
+            <a href="index.html" class="home-button">Go to Homepage</a>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 TextRP. All rights reserved.</p>
+            <p class="small">Visit <a href="https://textrp.io" target="_blank">textrp.io</a> for more information.</p>
+        </div>
+    </footer>
+</body>
+</html>
