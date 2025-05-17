@@ -124,21 +124,36 @@ document.addEventListener('DOMContentLoaded', function() {
     const header = document.querySelector('header');
     const scrollThreshold = 50; // Pixels to scroll before transforming header
     
-    // Function to check scroll position and update header (with throttling)
+    // Function to check scroll position and update header (with better mobile handling)
     let isScrolling = false;
     function checkScrollPosition() {
         if (!isScrolling) {
             isScrolling = true;
             window.requestAnimationFrame(() => {
-                if (window.scrollY > scrollThreshold) {
-                    if (!header.classList.contains('scrolled')) {
-                        header.classList.add('scrolled');
+                const scrollY = window.scrollY || window.pageYOffset; // Cross-browser compatibility
+                
+                try {
+                    if (scrollY > scrollThreshold) {
+                        if (!header.classList.contains('scrolled')) {
+                            header.classList.add('scrolled');
+                            // Make sure logo container and elements are visible
+                            const logoContainer = document.querySelector('.logo-container');
+                            const logo = document.querySelector('.logo');
+                            const title = header.querySelector('h1');
+                            
+                            if (logoContainer) logoContainer.style.display = 'flex';
+                            if (logo) logo.style.display = 'block';
+                            if (title) title.style.display = 'block';
+                        }
+                    } else {
+                        if (header.classList.contains('scrolled')) {
+                            header.classList.remove('scrolled');
+                        }
                     }
-                } else {
-                    if (header.classList.contains('scrolled')) {
-                        header.classList.remove('scrolled');
-                    }
+                } catch (e) {
+                    console.error('Error updating header:', e);
                 }
+                
                 isScrolling = false;
             });
         }

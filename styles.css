@@ -120,6 +120,8 @@ header.scrolled {
     flex-wrap: wrap;
     transition: all 0.3s ease-in-out;
     will-change: transform, flex-wrap, justify-content;
+    position: relative;
+    z-index: 9999; /* Ensure it stays on top */
 }
 
 /* Scrolled state for logo container */
@@ -136,6 +138,9 @@ header.scrolled .logo-container {
     will-change: transform, height;
     backface-visibility: hidden;
     transform: translateZ(0);
+    min-height: 35px; /* Minimum height to prevent disappearance */
+    position: relative;
+    z-index: 9999;
 }
 
 /* Scrolled state for logo */
@@ -153,6 +158,9 @@ header h1 {
     will-change: transform, font-size, margin;
     backface-visibility: hidden;
     transform: translateZ(0);
+    position: relative;
+    z-index: 9999;
+    min-height: 1.2rem; /* Minimum height to prevent disappearance */
 }
 
 /* Scrolled state for header title */
@@ -703,16 +711,25 @@ footer a:hover {
     header.scrolled .logo-container {
         flex-direction: row;
         padding-left: 0.5rem;
+        opacity: 1;
+        visibility: visible;
+        display: flex !important; /* Force display */
     }
     
     header.scrolled h1 {
         font-size: 1.2rem;
         margin-top: 0;
+        opacity: 1;
+        visibility: visible;
+        display: block !important; /* Force display */
     }
     
     header.scrolled .logo {
         height: 35px;
         margin-bottom: 0;
+        opacity: 1;
+        visibility: visible;
+        display: block !important; /* Force display */
     }
     
     /* Team Selection Mobile Styles */
