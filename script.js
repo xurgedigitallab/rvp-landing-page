@@ -298,7 +298,16 @@ async function updateLeaderboard() {
     }
     
     const data = await response.json();
-    updateLeaderboardUI(data);
+    console.log('API Response:', data); // Log the response for debugging
+    
+    // Map the API response to the expected format
+    const formattedData = {
+      redTeamCount: data.redTeamCount || data.red_team_count || 0,
+      blueTeamCount: data.blueTeamCount || data.blue_team_count || 0,
+      lastUpdated: data.lastUpdated || new Date().toLocaleString()
+    };
+    
+    updateLeaderboardUI(formattedData);
     
   } catch (error) {
     console.error('Error fetching leaderboard data:', error);
