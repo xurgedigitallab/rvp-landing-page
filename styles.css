@@ -373,9 +373,9 @@ header.scrolled h1 {
 }
 
 /* Team Selection Section */
-.team-selection {
-    background-color: #f9f9f9;
-    padding: 20px 0;
+.fair-play-section {
+    padding: 0.25rem 0;
+    background-color: #f8f9fa;
 }
 
 .team-selection h2 {
@@ -1258,8 +1258,9 @@ footer a:hover {
 /* Leaderboard Styles */
 .leaderboard-section {
     background-color: var(--bg-secondary);
-    padding: 3rem 0;
+    padding: 0.25rem 0;
     text-align: center;
+    margin: 0;
 }
 
 .team-scoreboard {
