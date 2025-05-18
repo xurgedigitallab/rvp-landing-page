@@ -79,7 +79,7 @@ header {
 }
 
 .logo-container h1 {
-    font-size: 1.8rem;
+    font-size: 1.4rem;
     margin: 0;
     color: var(--text-dark);
     transition: all 0.3s ease;
@@ -94,7 +94,7 @@ header {
     width: 100%;
     max-width: 100vw;
     overflow-x: auto;
-    padding: 0.8rem 5%;
+    padding: 0.8rem 0;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
 }
@@ -109,11 +109,15 @@ header.scrolled .logo-container img.logo {
 }
 
 header.scrolled .logo-container h1 {
-    font-size: 1.4rem;
+    font-size: 1rem;
 }
 
 header.scrolled .main-nav {
-    padding: 0.5rem 5%;
+    padding: 0.8rem 0; /* Match base .main-nav padding */
+}
+
+main {
+    padding-top: 70px /* Offset for fixed header */
 }
 
 .nav-tabs {
@@ -121,7 +125,7 @@ header.scrolled .main-nav {
     list-style: none;
     padding: 0;
     margin: 0 auto;
-    justify-content: center;
+    justify-content: space-around;
     flex-wrap: nowrap;
     width: 100%;
     max-width: 1200px;
@@ -129,6 +133,13 @@ header.scrolled .main-nav {
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none; /* Hide scrollbar for Firefox */
     font-size: clamp(0.8rem, 1.5vw, 1rem); /* Dynamic font size */
+}
+
+.nav-tabs::before,
+.nav-tabs::after {
+    content: '';
+    display: block;
+    min-width: 1rem; /* This creates the space */
 }
 
 /* Hide scrollbar for Chrome/Safari */
@@ -142,15 +153,17 @@ header.scrolled .main-nav {
 }
 
 .nav-tabs li {
-    flex: 1 0 auto;
+    flex: 0 0 auto;
     min-width: 100px;
     text-align: center;
     white-space: nowrap;
 }
 
+
+
 .nav-tab {
     display: block;
-    padding: 1rem 0.8rem;
+    padding: 1rem 0;
     color: white;
     text-decoration: none;
     font-weight: 700;
@@ -1402,7 +1415,7 @@ body {
 /* Small screen navigation */
 @media (max-width: 600px) {
     .nav-tab {
-        font-size: 0.75rem;
+        font-size: 0.6rem;
         padding: 0.8rem 0.3rem;
     }
     
