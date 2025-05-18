@@ -1,127 +1,120 @@
 // Carousel functionality variables
 let slideIndex = 1;
-let touchStartX = 0;
-let touchEndX = 0;
-let isDragging = false;
-let currentTranslate = 0;
-let animationID;
-const SWIPE_THRESHOLD = 50; // Minimum distance for a swipe to trigger slide change
-let isTransitioning = false;
 let autoAdvanceInterval = null; // Variable to store the auto-advance interval
 
-// DOM element variables, to be assigned in DOMContentLoaded
-let carouselTrack = null;
-let slides = []; // Using querySelectorAll later, so initialize as array
-let dots = [];   // Using querySelectorAll later, so initialize as array
-
-// Next/previous controls for carousel
-function plusSlides(n, isSwipe = false) {
-    if (isTransitioning && !isSwipe) return;
-    
+// Very simplified carousel implementation
+// Move to next/previous slide
+function plusSlides(n) {
+    // Get current index first, then update
+    const currentIndex = slideIndex;
     const slides = document.querySelectorAll('.carousel-slide');
-    if (!slides.length) return;
     
-    const newIndex = slideIndex + n;
+    console.log('Current slide:', currentIndex, 'Direction:', n);
     
-    // Check if we're at the beginning or end
+    // Calculate new index with looping
+    let newIndex = currentIndex + n;
+    
+    // Handle boundary conditions
     if (newIndex > slides.length) {
-        slideIndex = 1;
+        newIndex = 1; // Loop to first slide
     } else if (newIndex < 1) {
-        slideIndex = slides.length;
-    } else {
-        slideIndex = newIndex;
+        newIndex = slides.length; // Loop to last slide
     }
     
-    // Scroll to the active slide
-    scrollToActiveSlide();
+    console.log('Moving to slide:', newIndex, 'of', slides.length);
     
-    // Update dots
-    updateActiveDot();
+    // Update global index and show slide
+    slideIndex = newIndex;
+    displayCurrentSlide();
+}
+
+// Show a specific slide by its index
+function currentSlide(n) {
+    slideIndex = n;
+    displayCurrentSlide();
+}
+
+// Display the current slide using display:block/none approach
+function displayCurrentSlide() {
+    const slides = document.querySelectorAll('.carousel-slide');
+    const dots = document.querySelectorAll('.dot');
+    
+    if (!slides.length) return;
+    
+    console.log('Showing slide', slideIndex, 'of', slides.length);
+    
+    // First hide all slides
+    slides.forEach(slide => {
+        slide.style.display = 'none';
+    });
+    
+    // Then show only the active slide
+    slides[slideIndex-1].style.display = 'block';
+    
+    // Update dots if they exist
+    if (dots.length) {
+        dots.forEach((dot, index) => {
+            if (index === slideIndex - 1) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
+            }
+        });
+    }
     
     // Reset auto-advance timer
     resetAutoAdvance();
 }
 
-// Scroll to the active slide
-function scrollToActiveSlide() {
-    const slides = document.querySelectorAll('.carousel-slide');
-    if (slides.length === 0 || slideIndex < 1 || slideIndex > slides.length) return;
-    
-    const activeSlide = slides[slideIndex - 1];
-    if (activeSlide) {
-        // activeSlide.scrollIntoView({
-        //     behavior: 'smooth',
-        //     block: 'nearest',
-        //     inline: 'center'
-        // });
-    }
-}
-
-// Update active dot
-function updateActiveDot() {
-    const dots = document.querySelectorAll('.dot');
-    if (!dots.length) return;
-    
-    dots.forEach((dot, index) => {
-        dot.classList.toggle('active', index === slideIndex - 1);
-    });
-}
-
-// Reset auto-advance timer
-function resetAutoAdvance() {
-    if (autoAdvanceInterval) {
-        clearInterval(autoAdvanceInterval);
-    }
-    startAutoAdvance();
-}
-
 // Thumbnail image controls for carousel
 function currentSlide(n) {
-    if (n > 0 && n <= slides.length) {
-        slideIndex = n;
-        updateActiveSlide();
-    }
+    showSlides(n);
 }
 
-function updateActiveSlide() {
-    // Update dots
-    dots.forEach((dot, index) => {
-        dot.classList.toggle('active', index === slideIndex - 1);
-    });
-    
-    // Scroll to active slide
-    if (slides[slideIndex - 1]) {
-        // slides[slideIndex - 1].scrollIntoView({
-        //     behavior: 'smooth',
-        //     block: 'nearest',
-        //     inline: 'center'
-        // });
-    }
-}
-
-// Initialize carousel slides
+// Initialize carousel slides with simple display/hide approach
 function initCarousel() {
     const slides = document.querySelectorAll('.carousel-slide');
     const dots = document.querySelectorAll('.dot');
-    const track = document.querySelector('.carousel-track');
-    console.log('Carousel track element:', track);
+    const prevButton = document.querySelector('.carousel-arrow.prev');
+    const nextButton = document.querySelector('.carousel-arrow.next');
     
-    if (!slides.length || !track) return;
+    if (!slides.length) {
+        console.error('No carousel slides found');
+        return;
+    }
+    
+    console.log('Initializing carousel with', slides.length, 'slides');
     
     // Set initial slide index
     slideIndex = 1;
     
-    // Ensure all slides are visible and properly sized
+    // Initialize all slides with display: none except the first
     slides.forEach((slide, index) => {
-        slide.style.display = 'inline-block';
-        slide.style.width = '90vw';
-        slide.style.maxWidth = '500px';
-        slide.style.minWidth = '300px';
-        slide.style.margin = '0 10px';
-        slide.style.verticalAlign = 'top';
-        slide.style.scrollSnapAlign = 'center';
-        slide.style.scrollSnapStop = 'always';
+        slide.style.display = index === 0 ? 'block' : 'none';
+        slide.setAttribute('data-index', index + 1);
     });
+    
+    // Add navigation button event listeners
+    if (prevButton) {
+        prevButton.addEventListener('click', function() {
+            console.log('Previous button clicked');
+            plusSlides(-1);
+        });
+    } else {
+        console.error('Previous button not found');
+    }
+    
+    if (nextButton) {
+        nextButton.addEventListener('click', function() {
+            console.log('Next button clicked');
+            plusSlides(1);
+        });
+    } else {
+        console.error('Next button not found');
+    }
+    
+    // Mobile specific: Handle touch events
+    setupSimpleSwipeListeners();
     
     // Initialize dots
     if (dots.length > 0) {
@@ -131,16 +124,27 @@ function initCarousel() {
         });
     }
     
-    // Center first slide
+    // Get track reference
+    const track = document.querySelector('.carousel-track');
+    if (track) {
+        // Set up scroll event listener for infinite loop detection
+        track.addEventListener('scroll', handleInfiniteLoop);
+    }
+    
+    // Center first slide within the track only (not page scrolling)
     setTimeout(() => {
-        if (slides[0]) {
-            slides[0].scrollIntoView({
-                behavior: 'auto',
-                block: 'nearest',
-                inline: 'center'
-            });
+        // Get updated track reference to ensure it exists
+        const trackElement = document.querySelector('.carousel-track');
+        if (slides[0] && trackElement) {
+            // Calculate position to center first slide
+            const slideWidth = slides[0].offsetWidth;
+            const trackWidth = trackElement.offsetWidth;
+            const scrollPosition = slides[0].offsetLeft - (trackWidth - slideWidth) / 2;
+            
+            // Only scroll the track, not the page
+            trackElement.scrollLeft = scrollPosition;
         }
-    }, 100); // End of setTimeout for scrollIntoView
+    }, 100); // End of setTimeout
     
     // Initialize header morphing
     initHeaderMorphing();
@@ -191,6 +195,59 @@ function initHeaderMorphing() {
             ticking = true;
         }
     }, { passive: true });
+}
+
+// Handle infinite loop scrolling behavior
+function handleInfiniteLoop() {
+    const track = document.querySelector('.carousel-track');
+    if (!track) return;
+    
+    const slides = document.querySelectorAll('.carousel-slide:not(.cloned)');
+    if (slides.length === 0) return;
+    
+    // Get the slide width including margin
+    const slideWidth = slides[0].offsetWidth;
+    const margin = parseInt(window.getComputedStyle(slides[0]).marginRight, 10) || 0;
+    const slideFullWidth = slideWidth + margin;
+    
+    // Get the current scroll position
+    const scrollPos = track.scrollLeft;
+    
+    // Calculate total width
+    const totalWidth = track.scrollWidth;
+    const viewportWidth = track.offsetWidth;
+    
+    console.log(`Scroll position: ${scrollPos}, Total width: ${totalWidth}, Viewport: ${viewportWidth}`);
+    
+    // Check if we're at the beginning or end
+    // When at the beginning (showing clone of last slide)
+    if (scrollPos < slideFullWidth / 2) {
+        console.log('At beginning, jump to end');
+        // Jump to the real slides at the end
+        track.style.scrollBehavior = 'auto';
+        // Calculate position to show the last real slide
+        const lastSlideIndex = slides.length - 1;
+        const jumpToPos = lastSlideIndex * slideFullWidth;
+        track.scrollLeft = jumpToPos;
+        
+        // Reset to smooth scrolling after the jump
+        setTimeout(() => {
+            track.style.scrollBehavior = 'smooth';
+        }, 10);
+    }
+    // When at the end (showing clone of first slide)
+    else if (scrollPos + viewportWidth >= totalWidth - slideFullWidth / 2) {
+        console.log('At end, jump to beginning');
+        // Jump to the real slides at the beginning
+        track.style.scrollBehavior = 'auto';
+        // Jump to first real slide
+        track.scrollLeft = slideFullWidth; // The first slot has the cloned last slide
+        
+        // Reset to smooth scrolling after the jump
+        setTimeout(() => {
+            track.style.scrollBehavior = 'smooth';
+        }, 10);
+    }
 }
 
 // Show specific slide
@@ -407,11 +464,15 @@ function setupCarousel(passedTrack, passedSlides) {
     const nextButton = document.querySelector('.carousel-arrow.next');
     
     if (prevButton) {
-        prevButton.addEventListener('click', () => plusSlides(-1));
+        prevButton.addEventListener('click', function() {
+            plusSlides(-1); // Previous slide
+        });
     }
     
     if (nextButton) {
-        nextButton.addEventListener('click', () => plusSlides(1));
+        nextButton.addEventListener('click', function() {
+            plusSlides(1);  // Next slide
+        });
     }
     
     // Touch events
@@ -536,6 +597,38 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Carousel track (DOMContentLoaded):', carouselTrack);
     console.log('Carousel slides (DOMContentLoaded):', slides.length > 0 ? slides : 'No slides found');
     console.log('Carousel dots (DOMContentLoaded):', dots.length > 0 ? dots : 'No dots found');
+    
+    // Direct attachment of event listeners
+    const prevButton = document.querySelector('.carousel-arrow.prev');
+    const nextButton = document.querySelector('.carousel-arrow.next');
+    
+    if (prevButton) {
+        console.log('Found prev button, attaching listener');
+        // Remove any existing listeners
+        prevButton.replaceWith(prevButton.cloneNode(true));
+        // Get the fresh element
+        const freshPrevButton = document.querySelector('.carousel-arrow.prev');
+        // Add the listener
+        freshPrevButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Prev button clicked');
+            plusSlides(-1);
+        });
+    }
+    
+    if (nextButton) {
+        console.log('Found next button, attaching listener');
+        // Remove any existing listeners
+        nextButton.replaceWith(nextButton.cloneNode(true));
+        // Get the fresh element
+        const freshNextButton = document.querySelector('.carousel-arrow.next');
+        // Add the listener
+        freshNextButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Next button clicked');
+            plusSlides(1);
+        });
+    }
 
     // Initialize carousel functionality if elements exist
     if (carouselTrack && slides.length > 0) {
@@ -620,14 +713,27 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Tracking clicks (could be expanded for analytics)
-    document.querySelectorAll('.team-buttons a').forEach(button => {
-        button.addEventListener('click', function(e) {
-            const team = this.classList.contains('red-button') ? 'Red Team' : 'Blue Team';
-            console.log(`User clicked to join ${team}`);
-            // Here you could add analytics tracking code
-        });
-    });
+    // Cookie utility functions - defined outside the DOMContentLoaded event
+    function setCookie(name, value, days) {
+        let expires = '';
+        if (days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = '; expires=' + date.toUTCString();
+        }
+        document.cookie = name + '=' + (value || '') + expires + '; path=/';
+    }
+    
+    function getCookie(name) {
+        const nameEQ = name + '=';
+        const ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
     
     // Initialize the carousel
     showSlides(slideIndex);
@@ -637,7 +743,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('resize', handleCarouselDisplay);
     
     // Add touch event listeners for swipe functionality
-    setupSwipeListeners();
+    setupSimpleSwipeListeners();
 });
 
 // Leaderboard functionality
@@ -645,6 +751,74 @@ document.addEventListener('DOMContentLoaded', function() {
   // Only initialize the leaderboard if we're on the right page
   if (document.getElementById('leaderboard')) {
     initLeaderboard();
+  }
+  
+  // Team selection functionality
+  function checkTeamSelection() {
+    const selectedTeam = getCookie('selectedTeam');
+    if (selectedTeam) {
+      console.log(`User previously joined ${selectedTeam}`);
+      
+      // Disable the other team button
+      const redButton = document.querySelector('.red-button');
+      const blueButton = document.querySelector('.blue-button');
+      
+      if (!redButton || !blueButton) {
+        console.error('Team buttons not found');
+        return;
+      }
+      
+      if (selectedTeam === 'red') {
+        // User selected red team, disable blue button
+        blueButton.classList.add('disabled');
+        blueButton.setAttribute('aria-disabled', 'true');
+        blueButton.addEventListener('click', function(e) {
+          e.preventDefault();
+          alert('You have already joined the Red Team!');
+          return false;
+        });
+        
+        // Add visual indicator to show active team
+        redButton.classList.add('selected');
+      } else if (selectedTeam === 'blue') {
+        // User selected blue team, disable red button
+        redButton.classList.add('disabled');
+        redButton.setAttribute('aria-disabled', 'true');
+        redButton.addEventListener('click', function(e) {
+          e.preventDefault();
+          alert('You have already joined the Blue Team!');
+          return false;
+        });
+        
+        // Add visual indicator to show active team
+        blueButton.classList.add('selected');
+      }
+    }
+  }
+  
+  // Add click tracking and cookie setting to team buttons
+  const teamButtons = document.querySelectorAll('.team-buttons a');
+  if (teamButtons.length > 0) {
+    teamButtons.forEach(button => {
+      button.addEventListener('click', function(e) {
+        // Don't set cookie if the button is disabled
+        if (this.classList.contains('disabled')) {
+          e.preventDefault();
+          return false;
+        }
+        
+        const isRedTeam = this.classList.contains('red-button');
+        const team = isRedTeam ? 'Red Team' : 'Blue Team';
+        const teamValue = isRedTeam ? 'red' : 'blue';
+        
+        // Set cookie for 1 year (365 days)
+        setCookie('selectedTeam', teamValue, 365);
+        console.log(`User clicked to join ${team}`);
+      });
+    });
+    
+    // Check for existing team selection when page loads
+    checkTeamSelection();
   }
 });
 
@@ -702,6 +876,45 @@ async function updateLeaderboard() {
       lastUpdated: new Date().toLocaleString()
     });
   }
+}
+
+// Simple swipe listeners for the transform-based carousel
+function setupSimpleSwipeListeners() {
+  const carousel = document.querySelector('.carousel-wrapper');
+  if (!carousel) {
+    console.error('Carousel wrapper not found');
+    return;
+  }
+  
+  let touchStartX = 0;
+  let touchEndX = 0;
+  const threshold = 50; // Minimum distance to detect swipe
+  
+  carousel.addEventListener('touchstart', function(e) {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+  
+  carousel.addEventListener('touchend', function(e) {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+  }, { passive: true });
+  
+  function handleSwipe() {
+    // Calculate swipe distance
+    const swipeDistance = touchEndX - touchStartX;
+    
+    if (Math.abs(swipeDistance) >= threshold) {
+      if (swipeDistance > 0) {
+        // Swiped right - go to previous slide
+        plusSlides(-1);
+      } else {
+        // Swiped left - go to next slide
+        plusSlides(1);
+      }
+    }
+  }
+  
+  console.log('Transform carousel swipe listeners initialized');
 }
 
 // Update the UI with leaderboard data

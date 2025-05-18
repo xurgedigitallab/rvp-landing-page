@@ -142,6 +142,108 @@ main {
     min-width: 1rem; /* This creates the space */
 }
 
+/* Carousel Styles */
+.carousel-wrapper {
+    position: relative; /* Context for absolute positioning of arrows */
+    overflow: hidden; /* Optional: if track overflows wrapper, good to hide */
+}
+
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%); /* Vertically center */
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10; /* Ensure arrows are above slides */
+    transition: background-color 0.3s ease;
+    margin: 0; /* Reset any margins */
+    padding: 0; /* Reset any padding */
+}
+
+.carousel-arrow:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.carousel-arrow svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+}
+
+.carousel-arrow.prev {
+    left: 15px;
+}
+
+.carousel-arrow.next {
+    right: 15px;
+}
+
+/* Carousel container and navigation styles */
+.carousel-container {
+    margin: 0 auto;
+    position: relative;
+    margin: 0 auto;
+    overflow: hidden;
+    max-width: 550px;
+}
+
+.carousel-track {
+    display: flex;
+    position: relative;
+    width: 100%;
+}
+
+.carousel-slide {
+    flex: 0 0 100%;
+    width: 100%;
+    min-width: 100%;
+    box-sizing: border-box;
+    padding: 0 5px;
+    position: relative;
+    opacity: 1;
+}
+
+/* Make sure the posts display properly within the slides */
+.x-post {
+    margin: 0 auto; 
+    width: 100%;
+    max-width: 450px;
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+    .carousel-container,
+    .carousel-wrapper {
+        max-width: 100%;
+    }
+    
+    .carousel-track {
+        flex-direction: row;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .carousel-slide {
+        flex: 0 0 auto;
+        width: clamp(280px, 80vw, 320px);
+        padding: 0 5px;
+    }
+    
+    .x-post {
+        /* min-width: 100%; */
+        width: 100%;
+    }
+}
+
+
 /* Hide scrollbar for Chrome/Safari */
 .nav-tabs::-webkit-scrollbar {
     display: none;
@@ -445,6 +547,62 @@ header.scrolled h1 {
 }
 
 /* Team Selection Section */
+
+/* Team button states */
+.team-buttons a.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+    position: relative;
+}
+
+.team-buttons a.disabled::after {
+    content: "\2718";
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: var(--accent-color);
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}
+
+.team-buttons a.selected {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+    position: relative;
+}
+
+.team-buttons a.selected::after {
+    content: "\2713";
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}
+
+/* Override disabled state for specific team buttons */
+.team-buttons a.red-button.disabled::after {
+    background-color: var(--blue-team);
+}
+
+.team-buttons a.blue-button.disabled::after {
+    background-color: var(--red-team);
+}
+
 .fair-play-section {
     padding: 0.25rem 0;
     background-color: #f8f9fa;
