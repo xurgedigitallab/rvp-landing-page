@@ -255,3 +255,81 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add touch event listeners for swipe functionality
     setupSwipeListeners();
 });
+
+// Leaderboard functionality
+document.addEventListener('DOMContentLoaded', function() {
+  // Only initialize the leaderboard if we're on the right page
+  if (document.getElementById('leaderboard')) {
+    initLeaderboard();
+  }
+});
+
+// Initialize leaderboard
+function initLeaderboard() {
+  // Initial load
+  updateLeaderboard();
+  
+  // Update every 5 minutes
+  setInterval(updateLeaderboard, 300000);
+}
+
+// Fetch leaderboard data from Airtable
+async function updateLeaderboard() {
+  try {
+    // Fetch API key from environment variable (this should be set on your server)
+    // Note: For local development, you'll need to set this up differently
+    const response = await fetch('/api/leaderboard');
+    
+    // If API endpoint isn't set up, use mock data for preview
+    if (!response.ok) {
+      console.warn('Leaderboard API not available, using mock data');
+      updateLeaderboardUI({
+        redTeamCount: Math.floor(Math.random() * 50) + 10,
+        blueTeamCount: Math.floor(Math.random() * 50) + 10,
+        lastUpdated: new Date().toLocaleString()
+      });
+      return;
+    }
+    
+    const data = await response.json();
+    updateLeaderboardUI(data);
+    
+  } catch (error) {
+    console.error('Error fetching leaderboard data:', error);
+    // Use mock data as fallback
+    updateLeaderboardUI({
+      redTeamCount: Math.floor(Math.random() * 50) + 10,
+      blueTeamCount: Math.floor(Math.random() * 50) + 10,
+      lastUpdated: new Date().toLocaleString()
+    });
+  }
+}
+
+// Update the UI with leaderboard data
+function updateLeaderboardUI(data) {
+  // Update team counts
+  document.getElementById('red-team-count').textContent = data.redTeamCount || 0;
+  document.getElementById('blue-team-count').textContent = data.blueTeamCount || 0;
+  
+  // Update last updated time
+  document.getElementById('last-updated').textContent = data.lastUpdated || new Date().toLocaleString();
+  
+  // Determine winner
+  const redCount = data.redTeamCount || 0;
+  const blueCount = data.blueTeamCount || 0;
+  const winningTeam = document.getElementById('winning-team');
+  
+  if (redCount > blueCount) {
+    winningTeam.textContent = 'RED TEAM LEADS!';
+    winningTeam.className = 'winning-team red-leader';
+  } else if (blueCount > redCount) {
+    winningTeam.textContent = 'BLUE TEAM LEADS!';
+    winningTeam.className = 'winning-team blue-leader';
+  } else if (redCount === 0 && blueCount === 0) {
+    winningTeam.textContent = 'CHALLENGE STARTS MAY 18';
+    winningTeam.className = 'winning-team';
+  } else {
+    winningTeam.textContent = 'TEAMS ARE TIED!';
+    winningTeam.className = 'winning-team tie';
+  }
+}

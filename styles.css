@@ -1238,4 +1238,109 @@ footer a:hover {
     }
 }
 
+/* Leaderboard Styles */
+.leaderboard-section {
+    background-color: #f8f9fa;
+    padding: 3rem 0;
+    text-align: center;
+}
 
+.team-scoreboard {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 2rem 0;
+    flex-wrap: wrap;
+}
+
+.team-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem;
+    border-radius: 10px;
+    min-width: 200px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.red-team {
+    background: linear-gradient(135deg, #ff5e62, #ff9966);
+    color: white;
+}
+
+.blue-team {
+    background: linear-gradient(135deg, #4e54c8, #8f94fb);
+    color: white;
+}
+
+.team-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+}
+
+.team-count {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+}
+
+.team-posts {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.winning-team {
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin: 2rem 0;
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: #e9ecef;
+    display: inline-block;
+    min-width: 300px;
+}
+
+.red-leader {
+    background-color: #ff5e62;
+    color: white;
+}
+
+.blue-leader {
+    background-color: #4e54c8;
+    color: white;
+}
+
+.tie {
+    background: linear-gradient(90deg, #ff5e62 0%, #4e54c8 100%);
+    color: white;
+}
+
+.leaderboard-info {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-top: 2rem;
+}
+
+/* Leaderboard Mobile Responsiveness */
+@media (max-width: 768px) {
+    .team-scoreboard {
+        gap: 1rem;
+    }
+    
+    .team-score {
+        min-width: 150px;
+        padding: 1rem;
+    }
+    
+    .team-count {
+        font-size: 2.5rem;
+    }
+    
+    .winning-team {
+        font-size: 1.5rem;
+        min-width: 250px;
+    }
+}
