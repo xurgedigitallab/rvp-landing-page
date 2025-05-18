@@ -1,11 +1,28 @@
 :root {
+    /* Team colors */
     --red-team: #ff0000;
     --blue-team: #0044cc;
     --yellow-accent: #ffcc00;
+    
+    /* Text colors */
     --text-light: #ffffff;
     --text-dark: #333333;
+    --purple-accent: #8626c9;
+    
+    /* Background colors */
+    --bg-light: #f9f9f9;
+    --bg-secondary: #f8f9fa;
+    
+    /* Gradients */
     --gradient-red: linear-gradient(135deg, var(--red-team), #aa0000);
     --gradient-blue: linear-gradient(135deg, var(--blue-team), #002288);
+    --gradient-red-alt: linear-gradient(135deg, #ff5e62, #ff9966);
+    --gradient-blue-alt: linear-gradient(135deg, #4e54c8, #8f94fb);
+    
+    /* Z-index layers */
+    --z-base: 1;
+    --z-header: 9999;
+    --z-popup: 10000;
 }
 
 * {
@@ -18,7 +35,7 @@ body {
     font-family: 'Montserrat', sans-serif;
     line-height: 1.6;
     color: var(--text-dark);
-    background-color: #f9f9f9;
+    background-color: var(--bg-light);
     background-image: url('images/pattern.svg');
     background-attachment: fixed;
     overflow-x: hidden;
@@ -33,13 +50,13 @@ body {
 
 /* Header Styles */
 header {
-    background-color: #f9f9f9;
+    background-color: var(--bg-light);
     padding: 1rem 0 0;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     position: -webkit-sticky; /* For iOS Safari */
     position: sticky;
     top: 0;
-    z-index: 9999; /* Increase z-index to ensure it stays above everything */
+    z-index: var(--z-header); /* Ensure it stays above everything */
     transition: all 0.3s ease-in-out;
     will-change: padding;
     width: 100%;
@@ -55,7 +72,7 @@ header.scrolled {
     margin-top: 1.5rem;
     background: linear-gradient(90deg, var(--red-team) 0%, var(--blue-team) 100%);
     position: relative;
-    z-index: 9999;
+    z-index: var(--z-header);
 }
 
 .nav-tabs {
@@ -121,7 +138,7 @@ header.scrolled {
     transition: all 0.3s ease-in-out;
     will-change: transform, flex-wrap, justify-content;
     position: relative;
-    z-index: 9999; /* Ensure it stays on top */
+    z-index: var(--z-header);
 }
 
 /* Scrolled state for logo container */
@@ -140,7 +157,7 @@ header.scrolled .logo-container {
     transform: translateZ(0);
     min-height: 35px; /* Minimum height to prevent disappearance */
     position: relative;
-    z-index: 9999;
+    z-index: var(--z-header);
 }
 
 /* Scrolled state for logo */
@@ -152,14 +169,14 @@ header.scrolled .logo {
 header h1 {
     font-size: 2rem;
     font-weight: 700;
-    color: #8626c9;
+    color: var(--purple-accent);
     text-align: center;
     transition: all 0.3s ease-in-out;
     will-change: transform, font-size, margin;
     backface-visibility: hidden;
     transform: translateZ(0);
     position: relative;
-    z-index: 9999;
+    z-index: var(--z-header);
     min-height: 1.2rem; /* Minimum height to prevent disappearance */
 }
 
@@ -1240,7 +1257,7 @@ footer a:hover {
 
 /* Leaderboard Styles */
 .leaderboard-section {
-    background-color: #f8f9fa;
+    background-color: var(--bg-secondary);
     padding: 3rem 0;
     text-align: center;
 }
@@ -1264,13 +1281,13 @@ footer a:hover {
 }
 
 .red-team {
-    background: linear-gradient(135deg, #ff5e62, #ff9966);
-    color: white;
+    background: var(--gradient-red-alt);
+    color: var(--text-light);
 }
 
 .blue-team {
-    background: linear-gradient(135deg, #4e54c8, #8f94fb);
-    color: white;
+    background: var(--gradient-blue-alt);
+    color: var(--text-light);
 }
 
 .team-name {
@@ -1305,17 +1322,17 @@ footer a:hover {
 
 .red-leader {
     background-color: #ff5e62;
-    color: white;
+    color: var(--text-light);
 }
 
 .blue-leader {
     background-color: #4e54c8;
-    color: white;
+    color: var(--text-light);
 }
 
 .tie {
     background: linear-gradient(90deg, #ff5e62 0%, #4e54c8 100%);
-    color: white;
+    color: var(--text-light);
 }
 
 .leaderboard-info {
