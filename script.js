@@ -49,11 +49,11 @@ function scrollToActiveSlide() {
     
     const activeSlide = slides[slideIndex - 1];
     if (activeSlide) {
-        activeSlide.scrollIntoView({
-            behavior: 'smooth',
-            block: 'nearest',
-            inline: 'center'
-        });
+        // activeSlide.scrollIntoView({
+        //     behavior: 'smooth',
+        //     block: 'nearest',
+        //     inline: 'center'
+        // });
     }
 }
 
@@ -91,11 +91,11 @@ function updateActiveSlide() {
     
     // Scroll to active slide
     if (slides[slideIndex - 1]) {
-        slides[slideIndex - 1].scrollIntoView({
-            behavior: 'smooth',
-            block: 'nearest',
-            inline: 'center'
-        });
+        // slides[slideIndex - 1].scrollIntoView({
+        //     behavior: 'smooth',
+        //     block: 'nearest',
+        //     inline: 'center'
+        // });
     }
 }
 
