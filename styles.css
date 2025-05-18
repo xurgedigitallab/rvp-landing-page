@@ -810,9 +810,13 @@ footer a:hover {
 /* X Post Example Styles - Carousel */
 .carousel-container {
     margin: 20px 0;
-    max-width: 100%;
+    width: 100%;
     position: relative;
     overflow: hidden;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .example-label {
@@ -824,22 +828,45 @@ footer a:hover {
 
 .carousel-track {
     display: flex;
+    flex-direction: row; /* Ensure horizontal layout */
     gap: 20px;
-    justify-content: center;
-    flex-wrap: wrap;
-    touch-action: pan-y; /* Allow vertical scrolling but capture horizontal swipes */
-    cursor: grab;
+    padding: 10px 20px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Hide scrollbar for Chrome/Safari */
+.carousel-track::-webkit-scrollbar {
+    height: 6px;
+}
+
+.carousel-track::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 3px;
+}
+
+.carousel-track::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.05);
+    border-radius: 3px;
 }
 
 .carousel-slide {
-    flex: 1 1 300px;
-    max-width: calc(50% - 10px);
+    flex: 0 0 auto;
+    width: 300px;
+    scroll-snap-align: start;
+    box-sizing: border-box;
 }
 
 .carousel-navigation {
     display: flex;
     justify-content: center;
-    margin-top: 15px;
+    margin-top: 20px;
+    padding: 0 10px;
 }
 
 .carousel-dots {
@@ -853,12 +880,20 @@ footer a:hover {
     background-color: #bbb;
     border-radius: 50%;
     display: inline-block;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
     cursor: pointer;
+    margin: 0 5px;
+    border: 2px solid transparent;
+}
+
+.dot:hover, .dot:focus {
+    transform: scale(1.2);
 }
 
 .dot.active {
     background-color: #4285F4;
+    transform: scale(1.2);
+    border-color: rgba(0,0,0,0.1);
 }
 
 .x-post {
