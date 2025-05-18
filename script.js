@@ -3,108 +3,302 @@ let slideIndex = 1;
 let touchStartX = 0;
 let touchEndX = 0;
 let isDragging = false;
-let startPos = 0;
 let currentTranslate = 0;
-let prevTranslate = 0;
-let animationID = 0;
+let animationID;
+const SWIPE_THRESHOLD = 50; // Minimum distance for a swipe to trigger slide change
+let isTransitioning = false;
+let autoAdvanceInterval = null; // Variable to store the auto-advance interval
 
-// Get DOM elements
-const carouselTrack = document.querySelector('.carousel-track');
-const slides = document.getElementsByClassName('carousel-slide');
-const dots = document.getElementsByClassName('dot');
+// DOM element variables, to be assigned in DOMContentLoaded
+let carouselTrack = null;
+let slides = []; // Using querySelectorAll later, so initialize as array
+let dots = [];   // Using querySelectorAll later, so initialize as array
 
 // Next/previous controls for carousel
-function plusSlides(n) {
-    showSlides(slideIndex += n);
+function plusSlides(n, isSwipe = false) {
+    if (isTransitioning && !isSwipe) return;
+    
+    const slides = document.querySelectorAll('.carousel-slide');
+    if (!slides.length) return;
+    
+    const newIndex = slideIndex + n;
+    
+    // Check if we're at the beginning or end
+    if (newIndex > slides.length) {
+        slideIndex = 1;
+    } else if (newIndex < 1) {
+        slideIndex = slides.length;
+    } else {
+        slideIndex = newIndex;
+    }
+    
+    // Scroll to the active slide
+    scrollToActiveSlide();
+    
+    // Update dots
+    updateActiveDot();
+    
+    // Reset auto-advance timer
+    resetAutoAdvance();
 }
 
-// Thumbnail image controls for carousel
-function currentSlide(n) {
-    showSlides(slideIndex = n);
-}
-
-function showSlides(n) {
-    if (!slides.length) return; // Exit if no slides exist
+// Scroll to the active slide
+function scrollToActiveSlide() {
+    const slides = document.querySelectorAll('.carousel-slide');
+    if (slides.length === 0 || slideIndex < 1 || slideIndex > slides.length) return;
     
-    // Update slide index
-    if (n > slides.length) { slideIndex = 1; }
-    if (n < 1) { slideIndex = slides.length; }
-    
-    // Update active dot
-    Array.from(dots).forEach((dot, index) => {
-        dot.classList.toggle('active', index === slideIndex - 1);
-    });
-    
-    // Scroll the active slide into view with smooth behavior
     const activeSlide = slides[slideIndex - 1];
-    if (activeSlide && carouselTrack) {
-        // Calculate scroll position
-        const container = carouselTrack.parentElement;
-        const containerRect = container.getBoundingClientRect();
-        const slideRect = activeSlide.getBoundingClientRect();
-        const scrollLeft = carouselTrack.scrollLeft;
-        const targetScroll = scrollLeft + (slideRect.left - containerRect.left) - ((containerRect.width - slideRect.width) / 2);
-        
-        // Smooth scroll to the target position
-        carouselTrack.scrollTo({
-            left: targetScroll,
-            behavior: 'smooth'
+    if (activeSlide) {
+        activeSlide.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+            inline: 'center'
         });
     }
 }
 
-// Touch event handlers
-function handleTouchStart(e) {
-    if (window.innerWidth > 768) return; // Only handle touch on mobile
+// Update active dot
+function updateActiveDot() {
+    const dots = document.querySelectorAll('.dot');
+    if (!dots.length) return;
     
-    touchStartX = e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
-    startPos = touchStartX;
-    isDragging = true;
-    
-    // Stop any animations
-    cancelAnimationFrame(animationID);
-    carouselTrack.style.transition = 'none';
+    dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === slideIndex - 1);
+    });
 }
 
-function handleTouchMove(e) {
-    if (!isDragging) return;
+// Reset auto-advance timer
+function resetAutoAdvance() {
+    if (autoAdvanceInterval) {
+        clearInterval(autoAdvanceInterval);
+    }
+    startAutoAdvance();
+}
+
+// Thumbnail image controls for carousel
+function currentSlide(n) {
+    if (n > 0 && n <= slides.length) {
+        slideIndex = n;
+        updateActiveSlide();
+    }
+}
+
+function updateActiveSlide() {
+    // Update dots
+    dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === slideIndex - 1);
+    });
     
-    const currentPosition = e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
-    const diff = currentPosition - startPos;
+    // Scroll to active slide
+    if (slides[slideIndex - 1]) {
+        slides[slideIndex - 1].scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+            inline: 'center'
+        });
+    }
+}
+
+// Initialize carousel slides
+function initCarousel() {
+    const slides = document.querySelectorAll('.carousel-slide');
+    const dots = document.querySelectorAll('.dot');
+    const track = document.querySelector('.carousel-track');
+    console.log('Carousel track element:', track);
     
-    // Prevent page scroll when swiping
-    if (Math.abs(diff) > 10) {
-        e.preventDefault();
+    if (!slides.length || !track) return;
+    
+    // Set initial slide index
+    slideIndex = 1;
+    
+    // Ensure all slides are visible and properly sized
+    slides.forEach((slide, index) => {
+        slide.style.display = 'inline-block';
+        slide.style.width = '90vw';
+        slide.style.maxWidth = '500px';
+        slide.style.minWidth = '300px';
+        slide.style.margin = '0 10px';
+        slide.style.verticalAlign = 'top';
+        slide.style.scrollSnapAlign = 'center';
+        slide.style.scrollSnapStop = 'always';
+    });
+    
+    // Initialize dots
+    if (dots.length > 0) {
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === 0);
+            dot.addEventListener('click', () => currentSlide(index + 1));
+        });
     }
     
-    // Update position
-    currentTranslate = prevTranslate + diff;
-    carouselTrack.style.transform = `translateX(${currentTranslate}px)`;
+    // Center first slide
+    setTimeout(() => {
+        if (slides[0]) {
+            slides[0].scrollIntoView({
+                behavior: 'auto',
+                block: 'nearest',
+                inline: 'center'
+            });
+        }
+    }, 100); // End of setTimeout for scrollIntoView
+    
+    // Initialize header morphing
+    initHeaderMorphing();
+    
+    // Set up auto-advance
+    startAutoAdvance();
+    
+    // Set up keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') plusSlides(-1);
+        if (e.key === 'ArrowRight') plusSlides(1);
+    });
+// Removed the stray }, 50); from here
+
 }
 
-function handleTouchEnd() {
-    if (!isDragging) return;
+// Initialize header morphing
+function initHeaderMorphing() {
+    console.log('initHeaderMorphing called');
+    const header = document.querySelector('header');
+    const logoContainer = document.querySelector('.logo-container');
+    const logo = document.querySelector('.logo-container img.logo');
+    const headerTitle = document.querySelector('.logo-container h1');
+    const mainNav = document.querySelector('.main-nav');
     
-    isDragging = false;
-    const movedBy = currentTranslate - prevTranslate;
-    
-    // Determine if we should change slides based on movement
-    if (Math.abs(movedBy) > 50) {
-        if (movedBy > 0 && slideIndex > 1) {
-            // Swiped right
-            slideIndex--;
-        } else if (movedBy < 0 && slideIndex < slides.length) {
-            // Swiped left
-            slideIndex++;
+    function updateHeader() {
+        // console.log('updateHeader called, window.scrollY:', window.scrollY);
+        if (window.scrollY > 50) {
+            header.classList.add('scrolled');
+            console.log('Header class scrolled ADDED');
+        } else {
+            header.classList.remove('scrolled');
+            console.log('Header class scrolled REMOVED');
         }
     }
     
-    // Animate to the new position
-    carouselTrack.style.transition = 'transform 0.3s ease-out';
-    showSlides(slideIndex);
+    // Initial check in case page loads with scroll
+    updateHeader();
     
-    // Reset values
-    prevTranslate = currentTranslate;
+    // Listen for scroll events with debounce
+    let ticking = false;
+    window.addEventListener('scroll', function() {
+        if (!ticking) {
+            window.requestAnimationFrame(function() {
+                updateHeader();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }, { passive: true });
+}
+
+// Show specific slide
+function showSlides(n) {
+    if (!slides.length || isTransitioning) return;
+    plusSlides(n - slideIndex);
+}
+
+// Touch event handlers
+function handleTouchStart(e) {
+    if (isTransitioning) return;
+    stopAutoAdvance();
+    
+    touchStartX = e.touches ? e.touches[0].clientX : e.clientX;
+    touchEndX = touchStartX;
+    isDragging = true;
+    
+    // Cancel any ongoing animations
+    cancelAnimationFrame(animationID);
+    
+    // Store initial position
+    const currentSlide = slides[slideIndex - 1];
+    if (currentSlide) {
+        currentSlide.style.transition = 'none';
+        currentTranslate = 0;
+    }
+    
+    // Prevent text selection during drag
+    e.preventDefault();
+    e.stopPropagation();
+}
+
+function handleTouchMove(e) {
+    if (!isDragging || isTransitioning) return;
+    
+    touchEndX = e.touches ? e.touches[0].clientX : e.clientX;
+    const diff = touchEndX - touchStartX;
+    
+    // Prevent scrolling the page while swiping
+    if (Math.abs(diff) > 10) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    const currentSlide = slides[slideIndex - 1];
+    if (!currentSlide) return;
+    
+    // Apply resistance to make it harder to drag
+    const resistance = 0.5;
+    let dragDistance = diff * resistance;
+    
+    // Add more resistance at the boundaries
+    if ((slideIndex === 1 && dragDistance > 0) || 
+        (slideIndex === slides.length && dragDistance < 0)) {
+        dragDistance *= 0.3; // More resistance at boundaries
+    }
+    
+    currentSlide.style.transform = `translateX(${dragDistance}px)`;
+}
+
+function handleTouchEnd() {
+    if (!isDragging || isTransitioning) {
+        resetTouchState();
+        return;
+    }
+    
+    const diff = touchEndX - touchStartX;
+    const currentSlide = slides[slideIndex - 1];
+    
+    if (!currentSlide) {
+        resetTouchState();
+        return;
+    }
+    
+    // Smoothly return to position if not enough swipe
+    if (Math.abs(diff) <= SWIPE_THRESHOLD) {
+        currentSlide.style.transition = 'transform 0.3s ease-out';
+        currentSlide.style.transform = 'translateX(0)';
+        
+        // Remove transition after animation completes
+        setTimeout(() => {
+            if (currentSlide) {
+                currentSlide.style.transition = '';
+            }
+            resetTouchState();
+        }, 300);
+        return;
+    }
+    
+    // Determine direction and change slide
+    if (diff > 0) {
+        // Swipe right - previous slide
+        plusSlides(-1, true);
+    } else {
+        // Swipe left - next slide
+        plusSlides(1, true);
+    }
+    
+    resetTouchState();
+}
+
+function resetTouchState() {
+    isDragging = false;
+    touchStartX = 0;
+    touchEndX = 0;
+    
+    // Resume auto-advance after a delay
+    setTimeout(startAutoAdvance, 3000);
 }
 
 // Handle responsive display of carousel
@@ -121,31 +315,203 @@ function handleCarouselDisplay() {
     showSlides(slideIndex);
 }
 
-// Initialize carousel event listeners
-function setupCarousel() {
-    if (!carouselTrack) return; // Exit if carousel doesn't exist
+// Auto-advance interval (in milliseconds)
+const AUTO_ADVANCE_INTERVAL = 5000;
+
+// Debounce helper function
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Handle responsive behavior
+function handleResize() {
+    const slides = document.querySelectorAll('.carousel-slide');
+    if (!slides.length) return;
     
-    // Ensure carousel track is horizontally scrollable
-    carouselTrack.style.overflowX = 'auto';
-    carouselTrack.style.display = 'flex';
-    carouselTrack.style.flexDirection = 'row';
-    carouselTrack.style.flexWrap = 'nowrap';
+    // Adjust slide width based on viewport
+    const viewportWidth = window.innerWidth;
+    const slideWidth = Math.min(500, viewportWidth * 0.9);
+    
+    slides.forEach(slide => {
+        slide.style.width = `${slideWidth}px`;
+        slide.style.minWidth = `${slideWidth}px`;
+    });
+    
+    // Restart auto-advance on desktop
+    if (viewportWidth > 768) {
+        startAutoAdvance();
+    } else {
+        stopAutoAdvance();
+    }
+}
+
+// Start auto-advancing the carousel
+function startAutoAdvance() {
+    // Don't start auto-advance on mobile devices
+    if (window.innerWidth <= 768) return;
+    
+    // Clear any existing interval
+    if (autoAdvanceInterval) {
+        clearInterval(autoAdvanceInterval);
+    }
+    
+    // Set up new interval
+    autoAdvanceInterval = setInterval(() => {
+        plusSlides(1);
+    }, AUTO_ADVANCE_INTERVAL);
+}
+
+// Initialize responsive behavior
+window.addEventListener('resize', debounce(handleResize, 250));
+
+// Initial setup
+handleResize();
+
+// Stop auto-advancing the carousel
+function stopAutoAdvance() {
+    if (autoAdvanceInterval) {
+        clearInterval(autoAdvanceInterval);
+        autoAdvanceInterval = null;
+    }
+}
+
+// Initialize carousel event listeners
+function setupCarousel(passedTrack, passedSlides) {
+    console.log('setupCarousel called');
+    console.log('passedTrack inside setupCarousel (before check):', passedTrack);
+    console.log('passedSlides.length inside setupCarousel (before check):', passedSlides ? passedSlides.length : 'passedSlides is undefined/null');
+    // Use passedTrack and passedSlides arguments
+    if (!passedTrack || !passedSlides || passedSlides.length === 0) {
+        console.error('Aborting setupCarousel: track or slides still missing.');
+        return; 
+    }
+    
+    // Initialize carousel first
+    initCarousel();
+    
+    // Show the first slide
+    if (passedSlides.length > 0) {
+        showSlides(slideIndex);
+    }
+    
+    // Set up event listeners
+    const prevButton = document.querySelector('.carousel-arrow.prev');
+    const nextButton = document.querySelector('.carousel-arrow.next');
+    
+    if (prevButton) {
+        prevButton.addEventListener('click', () => plusSlides(-1));
+    }
+    
+    if (nextButton) {
+        nextButton.addEventListener('click', () => plusSlides(1));
+    }
     
     // Touch events
-    carouselTrack.addEventListener('touchstart', handleTouchStart, { passive: true });
-    carouselTrack.addEventListener('touchmove', handleTouchMove, { passive: false });
-    carouselTrack.addEventListener('touchend', handleTouchEnd, { passive: true });
+    if (passedTrack) {
+        passedTrack.addEventListener('touchstart', handleTouchStart, { passive: true });
+        passedTrack.addEventListener('touchmove', handleTouchMove, { passive: false });
+        passedTrack.addEventListener('touchend', handleTouchEnd, { passive: true });
+    }
     
-    // Mouse events for desktop testing
-    carouselTrack.addEventListener('mousedown', handleTouchStart);
-    document.addEventListener('mousemove', handleTouchMove);
-    document.addEventListener('mouseup', handleTouchEnd);
-    document.addEventListener('mouseleave', handleTouchEnd);
+    // Touch event listeners are attached to passedTrack above.
+
+    let touchStartX = 0;
+    let touchEndX = 0;
+    let isDragging = false;
+    let startPos = 0;
+    let currentTranslate = 0;
+    let prevTranslate = 0;
+            
+            function handleTouchStart(e) {
+                if (e.type === 'touchstart') {
+                    touchStartX = e.touches[0].clientX;
+                } else {
+                    touchStartX = e.clientX;
+                    e.preventDefault();
+                }
+                startPos = touchStartX;
+                isDragging = true;
+                passedTrack.style.cursor = 'grabbing';
+                passedTrack.style.transition = 'none';
+            }
+            
+            function handleTouchMove(e) {
+                if (!isDragging) return;
+                
+                if (e.type === 'touchmove') {
+                    touchEndX = e.touches[0].clientX;
+                } else {
+                    if (!e.buttons) {
+                        handleTouchEnd();
+                        return;
+                    }
+                    touchEndX = e.clientX;
+                }
+                
+                const diff = touchEndX - touchStartX;
+                touchStartX = touchEndX;
+                
+                // Prevent page scrolling when dragging
+                if (Math.abs(diff) > 5) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Move the carousel
+                    currentTranslate = prevTranslate + diff;
+                    passedTrack.style.transform = `translateX(${currentTranslate}px)`;
+                }
+            }
+            
+            function handleTouchEnd() {
+                if (!isDragging) return;
+                
+                isDragging = false;
+                passedTrack.style.cursor = 'grab';
+                passedTrack.style.transition = 'transform 0.3s ease-out';
+                
+                const swipeThreshold = 50; // Minimum distance to trigger slide change
+                const diff = touchEndX - startPos;
+                
+                if (Math.abs(diff) > swipeThreshold) {
+                    if (diff > 0) {
+                        // Swipe right - go to previous slide
+                        plusSlides(-1);
+                    } else {
+                        // Swipe left - go to next slide
+                        plusSlides(1);
+                    }
+                } else {
+                    // Return to original position
+                    passedTrack.style.transform = 'translateX(0)';
+                }
+                
+                // Reset transform after animation completes
+                setTimeout(() => {
+                    passedTrack.style.transition = '';
+                    passedTrack.style.transform = '';
+                    prevTranslate = 0;
+                }, 300);
+            }
+    // All touch handlers are now defined within setupCarousel and use passedTrack.
+    // The following logic for auto-advance, resize, and initial display is also part of setupCarousel.
     
-    // Click events for dots
-    Array.from(dots).forEach((dot, index) => {
-        dot.addEventListener('click', () => currentSlide(index + 1));
-    });
+    // Pause auto-advance on hover
+    const carousel = document.querySelector('.carousel-container');
+    if (carousel) {
+        carousel.addEventListener('mouseenter', stopAutoAdvance);
+        carousel.addEventListener('mouseleave', startAutoAdvance);
+    }
+    
+    // Start auto-advancing
+    startAutoAdvance();
     
     // Handle window resize
     let resizeTimer;
@@ -163,56 +529,27 @@ function setupCarousel() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize carousel
-    setupCarousel();
-    showSlides(slideIndex);
-    
-    // Header scroll transformation
-    const header = document.querySelector('header');
-    const scrollThreshold = 50; // Pixels to scroll before transforming header
-    
-    // Function to check scroll position and update header (with better mobile handling)
-    let isScrolling = false;
-    function checkScrollPosition() {
-        if (!isScrolling) {
-            isScrolling = true;
-            window.requestAnimationFrame(() => {
-                const scrollY = window.scrollY || window.pageYOffset; // Cross-browser compatibility
-                
-                try {
-                    if (scrollY > scrollThreshold) {
-                        if (!header.classList.contains('scrolled')) {
-                            header.classList.add('scrolled');
-                            // Make sure logo container and elements are visible
-                            const logoContainer = document.querySelector('.logo-container');
-                            const logo = document.querySelector('.logo');
-                            const title = header.querySelector('h1');
-                            
-                            if (logoContainer) logoContainer.style.display = 'flex';
-                            if (logo) logo.style.display = 'block';
-                            if (title) title.style.display = 'block';
-                        }
-                    } else {
-                        if (header.classList.contains('scrolled')) {
-                            header.classList.remove('scrolled');
-                        }
-                    }
-                } catch (e) {
-                    console.error('Error updating header:', e);
-                }
-                
-                isScrolling = false;
-            });
-        }
+    // Initialize carousel elements
+    carouselTrack = document.querySelector('.carousel-track');
+    slides = document.querySelectorAll('.carousel-slide');
+    dots = document.querySelectorAll('.dot');
+    console.log('Carousel track (DOMContentLoaded):', carouselTrack);
+    console.log('Carousel slides (DOMContentLoaded):', slides.length > 0 ? slides : 'No slides found');
+    console.log('Carousel dots (DOMContentLoaded):', dots.length > 0 ? dots : 'No dots found');
+
+    // Initialize carousel functionality if elements exist
+    if (carouselTrack && slides.length > 0) {
+        setupCarousel(carouselTrack, slides);
+    } else {
+        console.error('Carousel track or slides not found. Carousel setup aborted.');
     }
+    // showSlides(slideIndex); // This might be redundant if initCarousel or setupCarousel handles initial display
     
-    // Initial check on page load
-    checkScrollPosition();
+    // Initialize header morphing
+    initHeaderMorphing();
     
-    // Check on scroll with passive event for better performance
-    window.addEventListener('scroll', checkScrollPosition, { passive: true });
-    
-    // Add animation to team buttons
+    // Pulse effect for buttons
+    const buttons = document.querySelectorAll('.red-button, .blue-button, .mint-button');
     const redButton = document.querySelector('.red-button');
     const blueButton = document.querySelector('.blue-button');
     
