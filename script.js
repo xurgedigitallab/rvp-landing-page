@@ -276,9 +276,15 @@ function initLeaderboard() {
 // Fetch leaderboard data from Airtable
 async function updateLeaderboard() {
   try {
-    // Fetch API key from environment variable (this should be set on your server)
-    // Note: For local development, you'll need to set this up differently
-    const response = await fetch('/api/leaderboard');
+    // Use the deployed Netlify function URL
+    const apiUrl = 'https://textrp-leaderboard-api.netlify.app/.netlify/functions/leaderboard';
+    
+    const response = await fetch(apiUrl, {
+      headers: {
+        'Accept': 'application/json',
+      },
+      mode: 'cors'
+    });
     
     // If API endpoint isn't set up, use mock data for preview
     if (!response.ok) {
