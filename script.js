@@ -696,6 +696,21 @@ function initExamplePostsNavigation() {
 }
 
 // Initialize when the page loads
+// Smooth scroll to element with offset for fixed header
+function smoothScrollTo(targetId) {
+  const headerHeight = document.querySelector('header').offsetHeight;
+  const targetElement = document.querySelector(targetId);
+  
+  if (targetElement) {
+    const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20; // 20px extra padding
+    
+    window.scrollTo({
+      top: targetPosition,
+      behavior: 'smooth'
+    });
+  }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   console.log('DOM fully loaded');
   
@@ -713,6 +728,17 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
       console.error('updateChallengeStatus function not found');
     }
+    
+    // Add smooth scrolling to navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        if (href !== '#') {  // Don't prevent default behavior for '#' links
+          e.preventDefault();
+          smoothScrollTo(href);
+        }
+      });
+    });
     
     // Check challenge status every minute
     setInterval(function() {
