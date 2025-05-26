@@ -1,3 +1,152 @@
+// Challenge dates (in Pacific Time)
+const CHALLENGE_START_DATE = new Date('2025-05-30T08:00:00-07:00');
+const CHALLENGE_END_DATE = new Date('2025-06-01T00:00:00-07:00');
+
+// Check challenge status
+function getChallengeStatus() {
+    const now = new Date();
+    if (now < CHALLENGE_START_DATE) {
+        return 'not_started';
+    } else if (now >= CHALLENGE_START_DATE && now < CHALLENGE_END_DATE) {
+        return 'in_progress';
+    } else {
+        return 'ended';
+    }
+}
+
+// Format time remaining
+function formatTimeRemaining(endDate) {
+    const now = new Date();
+    const diff = endDate - now;
+    
+    if (diff <= 0) {
+        return '00:00:00';
+    }
+    
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    
+    if (days > 0) {
+        return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    } else {
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+}
+
+// Update UI based on challenge status
+function updateChallengeStatus() {
+    console.log('updateChallengeStatus called');
+    const status = getChallengeStatus();
+    const joinButtons = document.querySelectorAll('.team-option a');
+    const leaderboard = document.getElementById('leaderboard');
+    const teamSelection = document.getElementById('team-selection');
+    
+    console.log('Challenge status:', status);
+    console.log('joinButtons found:', joinButtons.length);
+    console.log('leaderboard found:', !!leaderboard);
+    console.log('teamSelection found:', !!teamSelection);
+    
+    // Update join buttons
+    joinButtons.forEach(button => {
+        if (status === 'not_started') {
+            button.style.opacity = '0.6';
+            button.style.pointerEvents = 'none';
+            button.setAttribute('title', 'Challenge starts May 30, 2025');
+        } else if (status === 'in_progress') {
+            button.style.opacity = '1';
+            button.style.pointerEvents = 'auto';
+            button.removeAttribute('title');
+        } else {
+            // Challenge ended
+            button.style.opacity = '0.6';
+            button.style.pointerEvents = 'none';
+            button.setAttribute('title', 'Challenge has ended');
+        }
+    });
+    
+    // Update leaderboard visibility
+    if (leaderboard) {
+        leaderboard.style.display = status !== 'not_started' ? 'block' : 'none';
+    }
+    
+    // Handle countdown display
+    if (teamSelection) {
+        let countdown = teamSelection.querySelector('.countdown');
+        
+        // Create countdown element if it doesn't exist
+        if (!countdown && status !== 'ended') {
+            countdown = document.createElement('div');
+            countdown.className = 'countdown';
+            countdown.style.textAlign = 'center';
+            countdown.style.margin = '20px 0';
+            countdown.style.fontWeight = 'bold';
+            countdown.style.fontSize = '1.2em';
+            
+            // Insert at the top of the team selection section
+            const firstChild = teamSelection.firstElementChild;
+            if (firstChild) {
+                teamSelection.insertBefore(countdown, firstChild);
+            } else {
+                teamSelection.appendChild(countdown);
+            }
+        }
+        
+        // Update countdown based on status
+        if (status === 'not_started') {
+            // Countdown to challenge start
+            const updateCountdown = () => {
+                const now = new Date();
+                const diff = CHALLENGE_START_DATE - now;
+                
+                if (diff <= 0) {
+                    countdown.textContent = 'Challenge has started!';
+                    setTimeout(() => {
+                        updateChallengeStatus(); // Refresh the page state
+                    }, 3000);
+                    return;
+                }
+                
+                countdown.textContent = `Challenge starts in: ${formatTimeRemaining(CHALLENGE_START_DATE)}`;
+                
+                if (now < CHALLENGE_START_DATE) {
+                    requestAnimationFrame(updateCountdown);
+                }
+            };
+            updateCountdown();
+            
+        } else if (status === 'in_progress') {
+            // Countdown to challenge end
+            const updateCountdown = () => {
+                const now = new Date();
+                const diff = CHALLENGE_END_DATE - now;
+                
+                if (diff <= 0) {
+                    countdown.textContent = 'Challenge has ended!';
+                    setTimeout(() => {
+                        updateChallengeStatus(); // Refresh the page state
+                    }, 3000);
+                    return;
+                }
+                
+                countdown.textContent = `Time remaining: ${formatTimeRemaining(CHALLENGE_END_DATE)}`;
+                
+                if (now < CHALLENGE_END_DATE) {
+                    requestAnimationFrame(updateCountdown);
+                }
+            };
+            updateCountdown();
+            
+        } else {
+            // Challenge ended - remove countdown if it exists
+            if (countdown) {
+                countdown.remove();
+            }
+        }
+    }
+}
+
 // Carousel functionality variables
 let slideIndex = 1;
 let autoAdvanceInterval = null; // Variable to store the auto-advance interval
@@ -546,9 +695,35 @@ function initExamplePostsNavigation() {
   }
 }
 
-// Initialize example posts navigation when the page loads
+// Initialize when the page loads
 document.addEventListener('DOMContentLoaded', function() {
-  initExamplePostsNavigation();
+  console.log('DOM fully loaded');
+  
+  try {
+    // Initialize example posts navigation
+    if (typeof initExamplePostsNavigation === 'function') {
+      initExamplePostsNavigation();
+    } else {
+      console.warn('initExamplePostsNavigation function not found');
+    }
+    
+    // Initialize challenge status
+    if (typeof updateChallengeStatus === 'function') {
+      updateChallengeStatus();
+    } else {
+      console.error('updateChallengeStatus function not found');
+    }
+    
+    // Check challenge status every minute
+    setInterval(function() {
+      if (typeof updateChallengeStatus === 'function') {
+        updateChallengeStatus();
+      }
+    }, 60000);
+    
+  } catch (error) {
+    console.error('Error during initialization:', error);
+  }
 });
 
 // Start auto-advancing the carousel
