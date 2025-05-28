@@ -715,6 +715,13 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log('DOM fully loaded');
   
   try {
+    // Initialize header morphing for scroll effect
+    if (typeof initHeaderMorphing === 'function') {
+      initHeaderMorphing();
+    } else {
+      console.warn('initHeaderMorphing function not found');
+    }
+    
     // Initialize example posts navigation
     if (typeof initExamplePostsNavigation === 'function') {
       initExamplePostsNavigation();
